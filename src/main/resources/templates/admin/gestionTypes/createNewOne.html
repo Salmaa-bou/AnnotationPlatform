@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create NLP Task</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.5/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f9fafb 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            padding: 3rem 1rem;
+        }
+
+        .container {
+            max-width: 850px;
+        }
+
+        .card {
+            background-color: white;
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            padding: 3rem 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 0.6rem;
+        }
+
+        .form-control {
+            border-radius: 0.6rem;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .btn-success {
+            background: linear-gradient(90deg, #10b981, #22c55e);
+            border: none;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(90deg, #059669, #16a34a);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary {
+            border-radius: 0.5rem;
+            padding: 0.5rem 1.2rem;
+        }
+
+        .btn-outline-danger {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .category-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .btn {
+            border-radius: 0.4rem;
+        }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+    </style>
+
+</head>
+<body class="container mt-5">
+<div class="card fade-in">
+    <h2 class="text-primary fw-bold mb-4">Create NLP Task</h2>
+
+    <form th:action="@{/admin/gestionTypes/submit}" th:object="${tache}" method="post" class="needs-validation" novalidate>
+        <div th:if="${#fields.hasErrors('global')}" class="alert alert-danger mb-4 rounded-2" role="alert">
+            <span th:each="err : ${#fields.errors('global')}" th:text="${err}">Error message</span>
+        </div>
+
+        <div class="mb-4">
+            <label for="name" class="form-label">Task Name</label>
+            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Categories</label>
+            <div id="categories-container" th:each="cat, stat : *{categories}">
+                <div class="category-group">
+                    <input type="text" class="form-control" th:field="*{categories[__${stat.index}__].name}" required>
+                    <button type="button" class="btn btn-outline-danger btn-sm" th:unless="${stat.first}" onclick="removeCategory(this)">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2 add-category-btn" onclick="addCategory()">
+                <i class="bi bi-plus-lg me-1"></i>Add Category
+            </button>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-success">Create Task</button>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <a th:href="@{/admin/gestionTypes/tachesdenlp}" class="btn btn-danger btn-sm">cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/webjars/bootstrap/5.3.5/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Bootstrap validation
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+
+    // Add category
+    function addCategory() {
+        const container = document.getElementById('categories-container');
+        const lastInput = container.lastElementChild;
+        const newInput = lastInput.cloneNode(true);
+        const index = container.children.length;
+        newInput.innerHTML = newInput.innerHTML.replace(/\[\d+\]/g, `[${index}]`);
+        newInput.querySelector('input').value = '';
+        container.appendChild(newInput);
+    }
+
+    // Remove category
+    function removeCategory(button) {
+        button.closest('.input-group').remove();
+        updateIndices();
+    }
+
+    // Update Thymeleaf indices after removal
+    function updateIndices() {
+        const container = document.getElementById('categories-container');
+        Array.from(container.children).forEach((item, index) => {
+            const input = item.querySelector('input');
+            input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+            input.id = input.id.replace(/\[\d+\]/, `[${index}]`);
+        });
+    }
+</script>
+</body>
+</html>

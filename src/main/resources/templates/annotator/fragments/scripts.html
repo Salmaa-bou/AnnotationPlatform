@@ -1,0 +1,42 @@
+<script th:fragment="scripts">
+  // Sidebar Toggle
+  const sidebar = document.getElementById('sidebar');
+  const toggleSidebar = document.getElementById('toggleSidebar');
+  const sidebarTexts = document.getElementsByClassName('sidebar-text');
+  toggleSidebar.addEventListener('click', () => {
+    sidebar.classList.toggle('sidebar-collapsed');
+    sidebar.classList.toggle('w-48');
+    for (let text of sidebarTexts) {
+      text.style.display = sidebar.classList.contains('sidebar-collapsed') ? 'none' : 'inline';
+    }
+  });
+
+  // Dark Mode Toggle
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+  });
+
+  function saveAnnotation(taskId, annotatorId) {
+    // Placeholder for saving annotation
+    alert(`Annotation saved for task ID: ${taskId} by annotator: ${annotatorId}`);
+    // Implement AJAX call to save annotation to backend
+    // Example AJAX call (uncomment and configure with your backend endpoint):
+    /*
+    fetch('/api/annotations/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            taskId: taskId,
+            annotatorId: annotatorId,
+            classification: document.querySelector(`select[name="task.classification"][th\\:field="*{task.classification}"][data-task-id="${taskId}"]`).value
+        })
+    })
+    .then(response => response.json())
+    .then(data => alert('Annotation saved successfully!'))
+    .catch(error => console.error('Error saving annotation:', error));
+    */
+  }
+</script>

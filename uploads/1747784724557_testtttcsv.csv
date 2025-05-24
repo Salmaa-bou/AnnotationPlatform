@@ -1,0 +1,71 @@
+id,texte1,texte2,label
+1,The cat is sleeping.,The animal is resting.,Entailment
+2,The sky is clear.,It's raining heavily.,Contradiction
+3,She loves pizza.,She enjoys Italian food.,Entailment
+4,The man is running.,The man is sitting.,Contradiction
+5,The woman is reading.,She is holding a book.,Entailment
+6,He is at home.,He is at school.,Contradiction
+7,They are playing football.,They are playing a sport.,Entailment
+8,She is working.,She is watching TV.,Contradiction
+9,The baby is crying.,A sound is coming from the baby.,Entailment
+10,The car is red.,The car is blue.,Contradiction
+11,A dog barked.,There was a noise.,Neutral
+12,He drank tea.,He had a beverage.,Entailment
+13,She went to Paris.,She visited a city.,Entailment
+14,The book is interesting.,It is boring.,Contradiction
+15,They arrived late.,They missed the meeting.,Neutral
+16,The sun is shining.,It is daytime.,Entailment
+17,The store is closed.,The store is open.,Contradiction
+18,He is sleeping.,He is snoring.,Neutral
+19,She is driving.,She is on the road.,Entailment
+20,The child is laughing.,The child is sad.,Contradiction
+21,Water is wet.,Water is dry.,Contradiction
+22,He studies math.,He studies science.,Neutral
+23,They ate sushi.,They ate Japanese food.,Entailment
+24,She went jogging.,She did exercise.,Entailment
+25,The movie was long.,The movie was short.,Contradiction
+26,The boy is painting.,He is using a brush.,Entailment
+27,The phone is on.,The phone has power.,Entailment
+28,He is outside.,He is indoors.,Contradiction
+29,The soup is hot.,The soup is cold.,Contradiction
+30,They live in Spain.,They live in Europe.,Entailment
+31,She speaks French.,She knows French.,Entailment
+32,It is snowing.,The ground is white.,Neutral
+33,The train is arriving.,People are getting off.,Neutral
+34,The laptop is broken.,It is not working.,Entailment
+35,The man is tall.,The man is short.,Contradiction
+36,She is smiling.,She is happy.,Neutral
+37,The birds are flying.,They are in the sky.,Entailment
+38,The ice is melting.,The temperature is high.,Neutral
+39,He is writing.,He is using a pen.,Neutral
+40,They are shopping.,They are at a store.,Entailment
+41,The road is empty.,There are many cars.,Contradiction
+42,The food is spicy.,The food is bland.,Contradiction
+43,She is baking a cake.,She is using the oven.,Entailment
+44,He is reading a novel.,He is reading.,Entailment
+45,The room is dark.,The lights are off.,Entailment
+46,She is wearing a coat.,It is cold.,Neutral
+47,They are watching a movie.,They are in a theater.,Neutral
+48,The plane landed.,The journey ended.,Neutral
+49,The baby is asleep.,The baby is dreaming.,Neutral
+50,He answered the phone.,He received a call.,Neutral
+51,The box is empty.,The box has nothing.,Entailment
+52,The door is open.,The door is closed.,Contradiction
+53,She plays the piano.,She plays an instrument.,Entailment
+54,It is raining.,The streets are wet.,Neutral
+55,The flower is blooming.,The flower is dying.,Contradiction
+56,The room is silent.,There is no noise.,Entailment
+57,He fixed the car.,The car was broken.,Neutral
+58,They are dancing.,They are moving.,Entailment
+59,The river is dry.,There is no water.,Entailment
+60,She is cooking.,There is food being prepared.,Entailment
+61,He is late.,He missed the bus.,Neutral
+62,They are at a concert.,They are listening to music.,Entailment
+63,It is midnight.,It is daytime.,Contradiction
+64,The window is clean.,It is dirty.,Contradiction
+65,The student passed.,The student studied.,Neutral
+66,The machine is working.,It is turned on.,Entailment
+67,The doctor is examining the patient.,The doctor is at the hospital.,Neutral
+68,The ground is wet.,It rained.,Neutral
+69,She painted the wall.,The wall has color.,Entailment
+70,He is brushing his teeth.,He is using a toothbrush.,Entailment

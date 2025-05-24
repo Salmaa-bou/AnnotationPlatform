@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotator Homepage</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(45deg, #1f2937, #374151, #1f2937);
+            background-size: 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .sidebar {
+            transition: width 0.3s ease-in-out;
+        }
+        .sidebar-collapsed {
+            width: 4rem;
+        }
+        .sidebar-item {
+            transition: all 0.3s ease;
+        }
+        .sidebar-item:hover {
+            transform: translateX(5px);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .task-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+        .dark-mode body {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        .dark-mode .glassmorphism {
+            background: rgba(31, 41, 55, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .task-card {
+            background: rgba(31, 41, 55, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<!-- Header -->
+<header class="gradient-bg shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-white">Annotation Platform</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-gray-300">Welcome, <span class =" hidden" th:text="${#authentication.name}">Annotator</span></span>
+
+
+            <button id="darkModeToggle" class="dark-mode-toggle text-white p-2 rounded-full hover:bg-gray-700">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+            </button>
+            <a th:href="@{/login}" class="text-blue-400 hover:text-blue-600">Logout</a>
+        </div>
+    </div>
+</header>
+
+<!-- Main Layout -->
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar gradient-bg text-white w-48 p-4">
+        <button id="toggleSidebar" class="text-white mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+            </svg>
+        </button>
+        <nav>
+            <ul class="space-y-2">
+                <li>
+                    <a href="/annotator/home/tasks" class="sidebar-item flex items-center p-2 rounded-lg text-white hover:text-gray-200">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-7 7v6h-6v-6H3z"></path>
+                        </svg>
+                        <span class="sidebar-text">go to  the assigned tasks</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/annotator/home/visiteprofil" class="sidebar-item flex items-center p-2 rounded-lg text-white hover:text-gray-200">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span class="sidebar-text">profiles</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/statistics" class="sidebar-item flex items-center p-2 rounded-lg text-white hover:text-gray-200">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="sidebar-text">Statistics</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content flex-1 p-6">
+        <div th:unless="${tasks}">
+            <!-- Default Homepage Content -->
+            <div class="max-w-4xl mx-auto text-center glassmorphism p-6 rounded-lg">
+                <h2 class="text-3xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Welcome to the Annotation Platform</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">Dive into annotating texts to power our NLP classification project. Click "My Tasks" to get started!</p>
+                <img src="https://via.placeholder.com/600x400/1f2937/ffffff?text=Annotation+Platform" alt="Welcome Image" class="rounded-lg shadow-md mx-auto transform hover:scale-105 transition-transform duration-300">
+            </div>
+        </div>
+        <div th:if="${tasks}">
+            <!-- Tasks List -->
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">My Tasks</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div th:each="task : ${tasks}" class="task-card glassmorphism p-4 rounded-lg">
+                    <h3 class="text-sm font-medium text-gray-700 dark:text-gray-200">ID: <span th:text="${task.id}"></span></h3>
+                    <p class="text-gray-600 dark:text-gray-300 mt-2" th:text="${task.text}"></p>
+                    <div class="mt-4 flex items-center space-x-2">
+                        <select th:field="*{task.classification}" class="border rounded px-2 py-1 text-gray-700 dark:text-gray-200 dark:bg-gray-700">
+                            <option value="similar">Similar</option>
+                            <option value="not_similar">Not Similar</option>
+                        </select>
+                        <button th:onclick="'saveAnnotation(' + ${task.id} + ')'" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transform hover:scale-105 transition-transform duration-200">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p>© 2025 Annotation Platform. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const sidebarTexts = document.getElementsByClassName('sidebar-text');
+    toggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('w-48');
+        for (let text of sidebarTexts) {
+            text.style.display = sidebar.classList.contains('sidebar-collapsed') ? 'none' : 'inline';
+        }
+    });
+
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+    });
+
+    function saveAnnotation(taskId) {
+        // Placeholder for saving annotation
+        alert('Annotation saved for task ID: ' + taskId);
+        // Implement AJAX call to save annotation to backend
+    }
+</script>
+</body>
+</html>

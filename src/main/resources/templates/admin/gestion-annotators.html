@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Annotateurs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-size: 0.95rem;
+        }
+
+        h1, h4 {
+            font-size: 1.5rem;
+        }
+
+        .table thead th {
+            font-size: 0.9rem;
+            padding: 0.6rem;
+        }
+
+        .table td {
+            font-size: 0.85rem;
+            padding: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .input-group input {
+            font-size: 0.85rem;
+        }
+
+        .card {
+            border-radius: 0.75rem;
+        }
+
+        .btn {
+            border-radius: 0.4rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-3">
+    <div class="text-center mb-3">
+        <h1 class="fw-bold text-primary">Gestion des Annotateurs</h1>
+        <p class="text-muted">Gérez facilement les annotateurs enregistrés sur la plateforme.</p>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0 text-dark">Liste des Annotateurs</h4>
+        <a th:href="@{/admin/addForm}" class="btn btn-success btn-sm">+ Ajouter un Annotateur</a>
+    </div>
+
+    <!-- Formulaire de recherche -->
+    <div class="row justify-content-center mb-3">
+        <div class="col-md-6">
+            <form th:action="@{/admin/search-annotator}" method="get" class="input-group">
+                <input type="text" class="form-control" name="search" placeholder="Rechercher un annotateur...">
+                <button type="submit" class="btn btn-outline-primary">Rechercher</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message de succès -->
+    <div th:if="${message}" class="alert alert-success text-center" role="alert">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Tableau des annotateurs -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover shadow-sm text-center">
+            <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Mot de passe</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
+                <th>RIB</th>
+                <th>État</th>
+                <th>Rôle</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${annotators}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.username}"></td>
+                <td th:text="${p.password}"></td>
+                <td th:text="${p.email}"></td>
+                <td th:text="${p.phone}"></td>
+                <td th:text="${p.address}"></td>
+                <td th:text="${p.rib}"></td>
+                <td th:text="${p.userState}"></td>
+                <td th:text="${p.role}"></td>
+                <td class="d-flex justify-content-center gap-1">
+                    <form th:action="@{/admin/updateForm}" method="get">
+                        <input type="hidden" name="id" th:value="${p.id}" />
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-sm btn-outline-success">Modifier</button>
+                    </form>
+                    <form th:action="@{/admin/delete}" method="post" th:object="${p}">
+                        <input type="hidden" name="id" th:value="${p.id}" />
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet annotateur ?');">
+                            Supprimer
+                        </button>
+                    </form>
+                    <form th:action="@{/admin/promotedToAdmin}" method="post" th:object="${p}">
+                        <input type="hidden" name="id" th:value="${p.id}" />
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn btn-sm btn-outline-info"
+                                onclick="return confirm('Êtes-vous sûr de vouloir rendre cet annotator admin!!! ');">
+                            =>Toadmin
+                        </button>
+                    </form>
+                    <form th:action="@{/admin/update-user-state}" method="post" class="d-flex align-items-center gap-2">
+                        <input type="hidden" name="id" th:value="${p.id}" />
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <div class="d-flex align-items-center gap-2">
+                            <select name="state" class="form-select form-select-sm" style="width: auto; min-width: 140px;">
+                                <option value="" disabled>-- Choisir un état --</option>
+                                <option th:each="state : ${allStates}"
+                                        th:value="${state.name()}"
+                                        th:text="${state.name()}"
+                                        th:selected="${state == p.userState}">
+                                </option>
+                            </select>
+
+                            <button type="submit" class="btn btn-sm btn-outline-primary rounded-circle p-2"
+                                    title="Mettre à jour le statut" style="width: 34px; height: 34px;">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                        </div>
+                    </form>
+
+
+
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

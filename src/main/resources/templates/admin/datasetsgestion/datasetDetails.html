@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tâches du Dataset</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        h2 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        th { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+<h2>Tâches liées au dataset : <span th:text="${dataset.name}"></span></h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+        <td th:text="${task.id}"></td>
+        <td th:text="${task.name}"></td>
+        <td th:text="${task.description}"></td>
+        <td th:text="${task.status}"></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(tasks)}">
+        <td colspan="4">Aucune tâche liée à ce dataset.</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

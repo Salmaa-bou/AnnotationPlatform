@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Créer une tâche NLP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f9f9f9;
+            padding: 40px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .form-label {
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3 class="mb-4">Créer une nouvelle tâche NLP</h3>
+
+    <form th:action="@{/admin/tasksgestion/create}" th:object="${task}" method="post">
+
+        <!-- Dataset Search -->
+        <div class="mb-3">
+            <label for="datasetSearch" class="form-label">Rechercher un dataset :</label>
+            <input type="text" id="datasetSearch" class="form-control" placeholder="Nom du dataset" autocomplete="off"/>
+        </div>
+
+        <!-- Dataset Select -->
+        <div class="mb-3">
+            <label for="datasetSelect" class="form-label">Sélectionner un dataset :</label>
+            <select id="datasetSelect" name="datasetId" class="form-select" required>
+                <option value="">-- Sélectionner --</option>
+                <th:block th:each="ds : ${datasets}">
+                    <option th:value="${ds.id}" th:text="${ds.name}"></option>
+                </th:block>
+            </select>
+            <div id="datasetCountDisplay" class="form-text mt-2 fw-bold text-primary"></div>
+        </div>
+
+        <!-- NLP Task Type -->
+        <div class="mb-3">
+            <label for="tacheNlpSelect" class="form-label">Type de tâche NLP :</label>
+            <select id="tacheNlpSelect" name="tacheNlpId" th:field="*{tacheNlpId}" class="form-select" required>
+                <option value="">-- Choisir --</option>
+                <th:block th:each="tache : ${nlptaches}">
+                    <option th:value="${tache.id}" th:text="${tache.name}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <!-- Categories -->
+        <div class="mb-3">
+            <label for="categorySelect" class="form-label">Catégories :</label>
+            <select id="categorySelect" th:field="*{categoryIds}" class="form-select" multiple required>
+                <option th:each="cat : ${preloadedCategories}"
+                        th:value="${cat.id}"
+                        th:text="${cat.name}"
+                        th:selected="${task.categoryIds != null} ? ${task.categoryIds.contains(cat.id)} : false">
+                </option>
+            </select>
+        </div>
+
+        <!-- Task Name -->
+        <div class="mb-3">
+            <label for="taskName" class="form-label">Nom de la tâche :</label>
+            <input type="text" id="taskName" th:field="*{name}" class="form-control" required/>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description :</label>
+            <textarea id="description" th:field="*{description}" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <!-- Number of Subtasks -->
+        <div class="mb-3">
+            <label for="nombreSousTaches" class="form-label">Nombre de sous-tâches :</label>
+            <input type="number" id="nombreSousTaches" th:field="*{nombreSousTaches}" class="form-control" min="1" required/>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg" onclick="this.disabled=true; this.form.submit();">Créer la tâche</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const datasetSearch = document.getElementById("datasetSearch");
+        const datasetSelect = document.getElementById("datasetSelect");
+        const datasetCountDisplay = document.getElementById("datasetCountDisplay");
+        const tacheNlpSelect = document.getElementById("tacheNlpSelect");
+        const categorySelect = document.getElementById("categorySelect");
+
+        // Recherche dataset
+        datasetSearch.addEventListener("input", () => {
+            const keyword = datasetSearch.value.trim();
+            fetch(`/admin/datasetsgestion/datasets/search?keyword=${encodeURIComponent(keyword)}`)
+                .then(response => response.json())
+                .then(datasets => {
+                    datasetSelect.innerHTML = '<option value="">-- Sélectionner --</option>';
+                    datasets.forEach(ds => {
+                        const option = document.createElement("option");
+                        option.value = ds.id;
+                        option.textContent = ds.name;
+                        datasetSelect.appendChild(option);
+                    });
+                });
+        });
+
+        // Affichage du nombre de couples
+        datasetSelect.addEventListener("change", () => {
+            const datasetId = datasetSelect.value;
+            if (datasetId) {
+                fetch(`/admin/tasksgestion/datasets/${datasetId}/count`)
+                    .then(res => res.json())
+                    .then(count => {
+                        datasetCountDisplay.textContent = `Ce dataset contient ${count} couples de textes.`;
+                    });
+            } else {
+                datasetCountDisplay.textContent = "";
+            }
+        });
+
+        // Chargement dynamique des catégories
+        tacheNlpSelect.addEventListener("change", () => {
+            const tacheId = tacheNlpSelect.value;
+            if (tacheId) {
+                fetch(`/admin/tasksgestion/nlptasks/${tacheId}/categories`)
+                    .then(res => res.json())
+                    .then(categories => {
+                        categorySelect.innerHTML = '';
+                        if (categories.length === 0) {
+                            const option = document.createElement("option");
+                            option.textContent = "Aucune catégorie disponible";
+                            option.disabled = true;
+                            categorySelect.appendChild(option);
+                        } else {
+                            categories.forEach(cat => {
+                                const option = document.createElement("option");
+                                option.value = cat.id;
+                                option.textContent = cat.name;
+                                categorySelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        categorySelect.innerHTML = '';
+                        const option = document.createElement("option");
+                        option.textContent = "Erreur de chargement";
+                        option.disabled = true;
+                        categorySelect.appendChild(option);
+                    });
+            } else {
+                categorySelect.innerHTML = '';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
